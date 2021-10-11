@@ -1,0 +1,7 @@
+*.out
+depends/
+*.o
+*.exe
+*.sln
+*.dll
+*.lib
