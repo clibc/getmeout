@@ -4,6 +4,7 @@
 typedef enum
 {
     PUSH,
+    POP,
     ADD,
     SUB
 }Instruction;

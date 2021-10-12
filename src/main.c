@@ -2,9 +2,24 @@
 #include <string.h>
 
 #include "stack_member.h"
+#include "stack.hpp"
 
 int main(void)
 {
+    char str1[10]  = {"push"};
+    StackMember sm1 = {str1, INST, {PUSH}};
+    char str2[10]  = {"pop"};
+    StackMember sm2 = {str2, INST, {POP}};
+    char str3[10]  = {"sub"};
+    StackMember sm3 = {str3, INST, {SUB}};
+    
+    Stack s = create_stack();
+    push(&s, &sm1);
+    push(&s, &sm2);
+    push(&s, &sm3);
+    StackMember* popped = pop(&s);
+    
+
     char parse_string[50] = "push 5 push 6 add return";
     char* delim = " ";
 
