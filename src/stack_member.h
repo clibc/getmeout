@@ -6,7 +6,9 @@ typedef enum
     PUSH,
     POP,
     ADD,
-    SUB
+    SUB,
+    MUL,
+    DIV
 }Instruction;
 
 typedef enum
@@ -25,12 +27,16 @@ typedef enum
 typedef struct
 {
     char*           string_value;
-    StackMemberType mtype;
+    StackMemberType type;
+
+    Instruction i_type;
+    Literal     l_type;
 
     union{
-        Instruction i_type;
-        Literal     l_type;
-    }subtype;
+        int int_value;
+        float float_value;
+        char* string_value;
+    }sdata;
 }StackMember;
 
 #endif //STACK_MEM

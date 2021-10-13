@@ -30,6 +30,7 @@ void push(Stack* s, StackMember* member)
     if(s->item_count == s->max_item_count){
         // realloc
         s->base = realloc(s->base, sizeof(StackMember) * s->max_item_count * 2);
+        s->top  = ((StackMember*)s->base) + (s->item_count - 1);
         s->max_item_count *= 2;
     }
 
