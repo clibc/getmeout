@@ -17,8 +17,9 @@ int main(void)
     push(&s, &sm1);
     push(&s, &sm2);
     push(&s, &sm3);
+    push(&s, &sm3);
     StackMember* popped = pop(&s);
-    
+    push(&s, &sm1);
 
     char parse_string[50] = "push 5 push 6 add return";
     char* delim = " ";

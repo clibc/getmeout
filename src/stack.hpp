@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#define INIT_STACK_ITEM_SIZE 32
+#define INIT_STACK_ITEM_SIZE 3
 
 #include "stack_member.h"
 
@@ -27,15 +27,18 @@ Stack create_stack()
 
 void push(Stack* s, StackMember* member)
 {
-    if(s->item_count + 1 > s->max_item_count){
+    if(s->item_count == s->max_item_count){
         // realloc
-        return;
+        s->base = realloc(s->base, sizeof(StackMember) * s->max_item_count * 2);
+        s->max_item_count *= 2;
     }
 
     //push
-    memcpy(s->top, member, sizeof(StackMember));
+    if(s->item_count != 0){
+        s->top = (StackMember*)s->top + 1;
+    }
     s->item_count += 1;
-    s->top = (StackMember*)s->top + 1;
+    memcpy(s->top, member, sizeof(StackMember));
 }
 
 StackMember* pop(Stack* s)
