@@ -9,8 +9,8 @@
 int main(void)
 {
     char code[100] = {
-        "push 43\n"
-        "push 23\n"
+        "push 43\n" 
+        "push 23\n" 
         "add\n"
         "push 5\n"
         "sub\n"
@@ -51,11 +51,17 @@ int main(void)
             member.i_type          = INT;
             member.sdata.int_value = digit;
         }
-
-
-        push(&stack, &member); 
+        push(&stack, &member);
     }
 
+    // second pass
+
+    while(stack.item_count > 0){
+        StackMember* m = pop(&stack);
+        
+        
+        
+    }
 
     return 0;
 }

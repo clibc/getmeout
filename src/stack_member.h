@@ -3,34 +3,29 @@
 
 typedef enum
 {
+    INST,
+    LITERAL,
+    
     PUSH,
     POP,
     ADD,
     SUB,
     MUL,
-    DIV
-}Instruction;
-
-typedef enum
-{
+    DIV,
+    
     INT,
     FlOAT,
-    STRING
-}Literal;
+    STRING,
 
-typedef enum
-{
-    INST,
-    LITERAL
-}StackMemberType;
+}TInfo;
 
 typedef struct
 {
     char*           string_value;
-    StackMemberType type;
+    TInfo type;
 
-    Instruction i_type;
-    Literal     l_type;
+    TInfo i_type;
+    TInfo l_type;
 
     union{
         int int_value;
