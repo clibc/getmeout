@@ -12,6 +12,7 @@ typedef enum
     SUB,
     MUL,
     DIV,
+    PPRINT,
     
     INT,
     FlOAT,

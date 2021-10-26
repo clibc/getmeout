@@ -28,4 +28,59 @@ void parse_code(char* code, char*** tokens, int* token_count)
     *token_count = t_count;
 }
 
+void get_tokens(Stack* stack, char** tokens, int token_count)
+{
+    for(int i = token_count - 1; i >= 0; --i){
+        StackMember member;
+        if(!strcmp(tokens[i], "push")){
+            member.string_value = "push";
+            member.type         = INST;
+            member.i_type       = PUSH;
+        }
+        else if(!strcmp(tokens[i], "pop")){
+            member.string_value = "pop";
+            member.type         = INST;
+            member.i_type       = POP;
+        }
+        else if(!strcmp(tokens[i], "add")){
+            member.string_value = "add";
+            member.type         = INST;
+            member.i_type       = ADD;
+        }
+        else if(!strcmp(tokens[i], "sub")){
+            member.string_value = "sub";
+            member.type         = INST;
+            member.i_type       = SUB;
+        }
+        else if(!strcmp(tokens[i], "pprint")){
+            member.string_value = "pprint";
+            member.type         = INST;
+            member.i_type       = PPRINT;
+        }
+        else if(isdigit(*tokens[i])){
+            int digit = atoi(tokens[i]);
+            member.string_value    = tokens[i];
+            member.type            = LITERAL;
+            member.i_type          = INT;
+            member.sdata.int_value = digit;
+        }
+        else if(!strcmp(tokens[i], "mul")){
+            member.string_value = "mul";
+            member.type         = INST;
+            member.i_type       = MUL;
+        }
+        else if(!strcmp(tokens[i], "div")){
+            member.string_value = "div";
+            member.type         = INST;
+            member.i_type       = DIV;
+        }
+        else{
+            printf("Unknown token '%s'\n", tokens[i]);
+            exit(-1);
+        }
+        push(stack, &member);
+    }
+
+}
+
 #endif//PARSER

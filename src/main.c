@@ -5,64 +5,38 @@
 #include "stack_member.h"
 #include "stack.hpp"
 #include "parser.hpp"
+#include "file.hpp"
 
 void assert_type(StackMember*, int);
+void embed_pprint();
 
-#define FILE_DESC file
-#define fput(...) fprintf(FILE_DESC, __VA_ARGS__)
-
-int main(void)
+int main(int argc, char** argv)
 {
-    FILE* FILE_DESC;
-    FILE_DESC = fopen("output.asm", "w");
-
-    char code[100] = {
-        "push 43\n" 
-        "push 23\n" 
-        "add\n"
-        "push 5\n"
-        "sub\n"
-    };
-
+    char *code;
+    if(argc == 1){
+        printf("Provide a source file\n");
+        exit(-1);
+    }
+    else if (argc == 2){
+        // load file
+        code = load_file(argv[1]);
+        //printf("%s\n", file_content);
+    }
+    else {
+        printf("Unrecognized agruments\n");
+        exit(-1);
+    }
+    
+    init_file();
+    
     Stack stack = create_stack(sizeof(StackMember));
 
     char** tokens = 0;
     int   token_count = 0;
     parse_code(code, &tokens, &token_count);
-    
-    for(int i = token_count - 1; i >= 0; --i){
-        StackMember member;
-        if(!strcmp(tokens[i], "push")){
-            member.string_value = "push";
-            member.type         = INST;
-            member.i_type       = PUSH;
-        }
-        else if(!strcmp(tokens[i], "pop")){
-            member.string_value = "pop";
-            member.type         = INST;
-            member.i_type       = POP;
-        }
-        else if(!strcmp(tokens[i], "add")){
-            member.string_value = "add";
-            member.type         = INST;
-            member.i_type       = ADD;
-        }
-        else if(!strcmp(tokens[i], "sub")){
-            member.string_value = "sub";
-            member.type         = INST;
-            member.i_type       = SUB;
-        }
-        else if(isdigit(*tokens[i])){
-            int digit = atoi(tokens[i]);
-            member.string_value    = tokens[i];
-            member.type            = LITERAL;
-            member.i_type          = INT;
-            member.sdata.int_value = digit;
-        }
-        push(&stack, &member);
-    }
+    get_tokens(&stack, tokens, token_count);
 
-    // second pass
+    // compile code
     fput("segment .text\n");
     fput("global _start\n");
     fput("_start:\n");
@@ -76,7 +50,6 @@ int main(void)
                 fput("push %i\n", arg->sdata.int_value);
             }
             else if(m->i_type == ADD){
-                // add
                 fput(";; add\n");
                 fput("pop rax\n");
                 fput("pop rbx\n");
@@ -84,12 +57,30 @@ int main(void)
                 fput("push rax\n");
             }
             else if(m->i_type == SUB){
-                // sub
                 fput(";; sub\n");
                 fput("pop rax\n");
                 fput("pop rbx\n");
                 fput("sub rbx,rax\n");
                 fput("push rbx\n");
+            }
+            else if(m->i_type == PPRINT){
+                fput(";;pprint\n");
+                fput("pop rdi\n");
+                fput("call pprint\n");
+            }
+            else if(m->i_type == MUL){
+                fput(";;mul\n");
+                fput("pop rax\n");
+                fput("pop rbx\n");
+                fput("mul rbx\n");
+                fput("push rax\n");
+            }
+            else if(m->i_type == DIV){
+                fput(";;div\n");
+                fput("pop rbx\n");
+                fput("pop rax\n");
+                fput("div rbx\n");
+                fput("push rax\n");
             }
         }
     }
@@ -97,7 +88,12 @@ int main(void)
     fput("pop rdi\n");
     fput("mov rax, 60\n");
     fput("syscall\n");
-    
+
+    embed_pprint();
+
+    close_file();
+    compile_file();
+
     return 0;
 }
 
@@ -116,7 +112,7 @@ void assert_type(StackMember* m, int expected_type)
             printf("LITERAL ");
             break;
         default:
-            printf("UNLISTED ");
+            printf("UNDEFINED ");
             break;
         }
         printf("but got ");
@@ -128,7 +124,7 @@ void assert_type(StackMember* m, int expected_type)
             printf("LITERAL ");
             break;
         default:
-            printf("UNLISTED ");
+            printf("UNDEFINED ");
             break;
         }
         printf("\n");
@@ -136,3 +132,44 @@ void assert_type(StackMember* m, int expected_type)
     }
 }
 #pragma GCC diagnostic pop
+
+void embed_pprint()
+{
+    fput("pprint:\n");
+    fput("sub rsp, 56\n");
+    fput("mov r9d, 3435973837\n");
+    fput("lea rax, [rsp+48]\n");
+    fput("mov BYTE [rsp+47], 10\n");
+    fput("lea rdx, [rsp+46]\n");
+    fput("mov QWORD[rsp+8], rax\n");
+    fput("lea r10d, [rax]\n");
+
+    fput(".L2:\n");
+    fput("mov eax, edi\n");
+    fput("mov ecx, edi\n");
+    fput("mov r8d, r10d\n");
+    fput("imul rax, r9\n");
+    fput("sub r8d, edx\n");
+    fput("sub rdx, 1\n");
+    fput("shr rax, 35\n");
+    fput("lea esi, [rax+rax*4]\n");
+    fput("add esi, esi\n");
+    fput("sub ecx, esi\n");
+    fput("add ecx, 48\n");
+    fput("mov BYTE [rdx+1], cl\n");
+    fput("mov ecx, edi\n");
+    fput("mov edi, eax\n");
+    fput("cmp ecx, 9\n");
+    fput("ja .L2\n");
+    fput("movsx rdx, r8d\n");
+    fput("mov eax, 32\n");
+    fput("mov edi, 1\n");
+    fput("sub rax, rdx\n");
+    fput("mov edx, r8d\n");
+    fput("lea rsi, [rsp+16+rax]\n");
+    fput("xor eax, eax\n");
+    fput("mov rax, 1 ;; SYS_WRITE\n");
+    fput("syscall \n");
+    fput("add rsp, 56\n");
+    fput("ret\n");
+}
