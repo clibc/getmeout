@@ -9,45 +9,47 @@
 
 typedef struct
 {
-    void* top;
-    void* base;
-    int   item_count;
-    int   max_item_count;
+    void*  top;
+    void*  base;
+    int    item_count;
+    int    max_item_count;
+    size_t member_size;
 }Stack;
 
-Stack create_stack()
+Stack create_stack(size_t size)
 {
     Stack s;
-    s.base = (void*)malloc(sizeof(StackMember) * INIT_STACK_ITEM_SIZE);
+    s.base = (void*)malloc(size * INIT_STACK_ITEM_SIZE);
     s.top  = s.base;
     s.item_count = 0;
     s.max_item_count = INIT_STACK_ITEM_SIZE;
+    s.member_size = size;
     return s;
 }
 
-void push(Stack* s, StackMember* member)
+void push(Stack* s, void* member)
 {
     if(s->item_count == s->max_item_count){
         // realloc
-        s->base = realloc(s->base, sizeof(StackMember) * s->max_item_count * 2);
-        s->top  = ((StackMember*)s->base) + (s->item_count - 1);
+        s->base = realloc(s->base, s->member_size * s->max_item_count * 2);
+        s->top  = (char*)s->base + (s->item_count - 1) * s->member_size;
         s->max_item_count *= 2;
     }
 
     //push
     if(s->item_count != 0){
-        s->top = (StackMember*)s->top + 1;
+        s->top = (char*)s->top + s->member_size;
     }
     s->item_count += 1;
-    memcpy(s->top, member, sizeof(StackMember));
+    memcpy(s->top, member, s->member_size);
 }
 
-StackMember* pop(Stack* s)
+void* pop(Stack* s)
 {
     if(s->item_count == 0){ return NULL;}
 
-    StackMember* retval = (StackMember*)s->top;
-    s->top = (StackMember*)s->top - 1;
+    void* retval = s->top;
+    s->top = (char*)s->top - s->member_size;
     s->item_count -= 1;
     
     return retval;

@@ -16,7 +16,6 @@ typedef enum
     INT,
     FlOAT,
     STRING,
-
 }TInfo;
 
 typedef struct
