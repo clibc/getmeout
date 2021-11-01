@@ -3,6 +3,8 @@
 
 #define MAX_TOKENS 20
 
+int is_digit(char*);
+
 void parse_code(char* code, char*** tokens, int* token_count)
 {
     char** tkns = malloc(sizeof(char*) * MAX_TOKENS);
@@ -57,8 +59,9 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
             member.type         = INST;
             member.i_type       = PPRINT;
         }
-        else if(isdigit(*tokens[i])){
+        else if(is_digit(tokens[i])){
             int digit = atoi(tokens[i]);
+            
             member.string_value    = tokens[i];
             member.type            = LITERAL;
             member.i_type          = INT;
@@ -74,6 +77,11 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
             member.type         = INST;
             member.i_type       = DIV;
         }
+        else if(!strcmp(tokens[i], "exit")){
+            member.string_value = "exit";
+            member.type         = INST;
+            member.i_type       = EXIT;
+        }
         else{
             printf("Unknown token '%s'\n", tokens[i]);
             exit(-1);
@@ -81,6 +89,12 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
         push(stack, &member);
     }
 
+}
+
+int is_digit(char* token)
+{
+    int is_minus = *token == '-';
+    return is_minus || isdigit(token[1]);
 }
 
 #endif//PARSER

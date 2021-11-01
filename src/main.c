@@ -49,6 +49,14 @@ int main(int argc, char** argv)
                 fput(";; push\n");
                 fput("push %i\n", arg->sdata.int_value);
             }
+            if(m->i_type == EXIT){
+                StackMember* arg = pop(&stack);
+                assert_type(arg, LITERAL);
+                fput(";; exit --- \n");
+                fput("mov rdi, 0x%02X\n", arg->sdata.int_value);
+                fput("mov rax, 60\n");
+                fput("syscall\n");
+            }
             else if(m->i_type == ADD){
                 fput(";; add\n");
                 fput("pop rax\n");

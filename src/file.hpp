@@ -8,7 +8,7 @@
 #define FILE_NAME "output.asm"
 #define fput(...) fprintf(FILE_DESC, __VA_ARGS__)
 
-FILE* FILE_DESC;
+static FILE* FILE_DESC;
 
 char* read_entire_file(const char*, int*);
 
@@ -45,8 +45,9 @@ char* read_entire_file(const char* filePath, int* size)
         fseek(File, 0, SEEK_END);
         Size = ftell(File);
         rewind(File);
-        Buffer = (char *)malloc(sizeof(char) * Size);
+        Buffer = (char *)malloc((sizeof(char) * Size) + 1);
         fread(Buffer, sizeof(char), Size, File);
+        Buffer[Size] = '\0';
     }
     else
     {

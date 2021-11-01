@@ -13,6 +13,7 @@ typedef enum
     MUL,
     DIV,
     PPRINT,
+    EXIT,
     
     INT,
     FlOAT,
