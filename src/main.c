@@ -37,6 +37,7 @@ int main(int argc, char** argv)
     get_tokens(&stack, tokens, token_count);
 
     // compile code
+    fput("BITS 64\n");
     fput("segment .text\n");
     fput("global _start\n");
     fput("_start:\n");
@@ -143,41 +144,85 @@ void assert_type(StackMember* m, int expected_type)
 
 void embed_pprint()
 {
-    fput("pprint:\n");
-    fput("sub rsp, 56\n");
-    fput("mov r9d, 3435973837\n");
-    fput("lea rax, [rsp+48]\n");
-    fput("mov BYTE [rsp+47], 10\n");
-    fput("lea rdx, [rsp+46]\n");
-    fput("mov QWORD[rsp+8], rax\n");
-    fput("lea r10d, [rax]\n");
+    /* fput("pprint:\n"); */
+    /* fput("sub rsp, 56\n"); */
+    /* fput("mov r9d, 3435973837\n"); */
+    /* fput("lea rax, [rsp+48]\n"); */
+    /* fput("mov BYTE [rsp+47], 10\n"); */
+    /* fput("lea rdx, [rsp+46]\n"); */
+    /* fput("mov QWORD[rsp+8], rax\n"); */
+    /* fput("lea r10d, [rax]\n"); */
 
+    /* fput(".L2:\n"); */
+    /* fput("mov eax, edi\n"); */
+    /* fput("mov ecx, edi\n"); */
+    /* fput("mov r8d, r10d\n"); */
+    /* fput("imul rax, r9\n"); */
+    /* fput("sub r8d, edx\n"); */
+    /* fput("sub rdx, 1\n"); */
+    /* fput("shr rax, 35\n"); */
+    /* fput("lea esi, [rax+rax*4]\n"); */
+    /* fput("add esi, esi\n"); */
+    /* fput("sub ecx, esi\n"); */
+    /* fput("add ecx, 48\n"); */
+    /* fput("mov BYTE [rdx+1], cl\n"); */
+    /* fput("mov ecx, edi\n"); */
+    /* fput("mov edi, eax\n"); */
+    /* fput("cmp ecx, 9\n"); */
+    /* fput("ja .L2\n"); */
+    /* fput("movsx rdx, r8d\n"); */
+    /* fput("mov eax, 32\n"); */
+    /* fput("mov edi, 1\n"); */
+    /* fput("sub rax, rdx\n"); */
+    /* fput("mov edx, r8d\n"); */
+    /* fput("lea rsi, [rsp+16+rax]\n"); */
+    /* fput("xor eax, eax\n"); */
+    /* fput("mov rax, 1 ;; SYS_WRITE\n"); */
+    /* fput("syscall \n"); */
+    /* fput("add rsp, 56\n"); */
+    /* fput("ret\n"); */
+
+    fput("pprint:\n");
+    fput("sub     rsp, 56\n");
+    fput("mov     eax, edi\n");
+    fput("mov     r8d, 1\n");
+    fput("mov     r9d, 3435973837\n");
+    fput("neg     eax\n");
+    fput("mov     BYTE [rsp+32], 10\n");
+    fput("lea     rsi, [rsp+31]\n");
+    fput("cmovs   eax, edi\n");
     fput(".L2:\n");
-    fput("mov eax, edi\n");
-    fput("mov ecx, edi\n");
-    fput("mov r8d, r10d\n");
-    fput("imul rax, r9\n");
-    fput("sub r8d, edx\n");
-    fput("sub rdx, 1\n");
-    fput("shr rax, 35\n");
-    fput("lea esi, [rax+rax*4]\n");
-    fput("add esi, esi\n");
-    fput("sub ecx, esi\n");
-    fput("add ecx, 48\n");
-    fput("mov BYTE [rdx+1], cl\n");
-    fput("mov ecx, edi\n");
-    fput("mov edi, eax\n");
-    fput("cmp ecx, 9\n");
-    fput("ja .L2\n");
-    fput("movsx rdx, r8d\n");
-    fput("mov eax, 32\n");
-    fput("mov edi, 1\n");
-    fput("sub rax, rdx\n");
-    fput("mov edx, r8d\n");
-    fput("lea rsi, [rsp+16+rax]\n");
-    fput("xor eax, eax\n");
+    fput("mov     edx, eax\n");
+    fput("sub     rsi, 1\n");
+    fput("imul    rdx, r9\n");
+    fput("shr     rdx, 35\n");
+    fput("lea     ecx, [rdx+rdx*4]\n");
+    fput("add     ecx, ecx\n");
+    fput("sub     eax, ecx\n");
+    fput("add     eax, 48\n");
+    fput("mov     BYTE [rsi+1], al\n");
+    fput("mov     eax, edx\n");
+    fput("mov     edx, r8d\n");
+    fput("add     r8d, 1\n");
+    fput("test    eax, eax\n");
+    fput("jne     .L2\n");
+    fput("test    edi, edi\n");
+    fput("jns     .L3\n");
+    fput("movsx   r8, r8d\n");
+    fput("mov     eax, 32\n");
+    fput("sub     rax, r8\n");
+    fput("lea     r8d, [rdx+2]\n");
+    fput("mov     BYTE [rsp+rax], 45\n");
+    fput(".L3:\n");
+    fput("movsx   rdx, r8d\n");
+    fput("mov     eax, 33\n");
+    fput("mov     edi, 1\n");
+    fput("sub     rax, rdx\n");
+    fput("mov     edx, r8d\n");
+    fput("lea     rsi, [rsp+rax]\n");
+    fput("xor     eax, eax\n");
     fput("mov rax, 1 ;; SYS_WRITE\n");
     fput("syscall \n");
-    fput("add rsp, 56\n");
+    fput("add     rsp, 56\n");
     fput("ret\n");
 }
