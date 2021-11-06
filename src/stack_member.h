@@ -5,6 +5,7 @@ typedef enum
 {
     INST,
     LITERAL,
+    STATEMENT,
     
     PUSH,
     POP,
@@ -14,6 +15,10 @@ typedef enum
     DIV,
     PPRINT,
     EXIT,
+
+    OP_EQ,
+    ST_IF,
+    ST_END,
     
     INT,
     FlOAT,

@@ -36,6 +36,9 @@ int main(int argc, char** argv)
     parse_code(code, &tokens, &token_count);
     get_tokens(&stack, tokens, token_count);
 
+    char jmp_addr[5];
+    int jmp_addr_count = 0;
+    
     // compile code
     fput("BITS 64\n");
     fput("segment .text\n");
@@ -43,53 +46,76 @@ int main(int argc, char** argv)
     fput("_start:\n");
     while(stack.item_count > 0){
         StackMember* m = pop(&stack);
-        if(m->type == INST){
+        if(m->type == INST || m->type == STATEMENT){
             if(m->i_type == PUSH){
                 StackMember* arg = pop(&stack);
                 assert_type(arg, LITERAL);
                 fput(";; push\n");
-                fput("push %i\n", arg->sdata.int_value);
+                fput("    push %i\n", arg->sdata.int_value);
             }
             if(m->i_type == EXIT){
                 StackMember* arg = pop(&stack);
                 assert_type(arg, LITERAL);
                 fput(";; exit --- \n");
-                fput("mov rdi, 0x%02X\n", arg->sdata.int_value);
-                fput("mov rax, 60\n");
-                fput("syscall\n");
+                fput("    mov rdi, 0x%02X\n", arg->sdata.int_value);
+                fput("    mov rax, 60\n");
+                fput("    syscall\n");
             }
             else if(m->i_type == ADD){
                 fput(";; add\n");
-                fput("pop rax\n");
-                fput("pop rbx\n");
-                fput("add rax,rbx\n");
-                fput("push rax\n");
+                fput("    pop rax\n");
+                fput("    pop rbx\n");
+                fput("    add rax,rbx\n");
+                fput("    push rax\n");
             }
             else if(m->i_type == SUB){
                 fput(";; sub\n");
-                fput("pop rax\n");
-                fput("pop rbx\n");
-                fput("sub rbx,rax\n");
-                fput("push rbx\n");
+                fput("    pop rax\n");
+                fput("    pop rbx\n");
+                fput("    sub rbx,rax\n");
+                fput("    push rbx\n");
             }
             else if(m->i_type == PPRINT){
                 fput(";;pprint\n");
-                fput("pop rdi\n");
-                fput("call pprint\n");
+                fput("    pop rdi\n");
+                fput("    push rdi\n");
+                fput("    call pprint\n");
             }
             else if(m->i_type == MUL){
                 fput(";;mul\n");
-                fput("pop rax\n");
-                fput("pop rbx\n");
-                fput("mul rbx\n");
-                fput("push rax\n");
+                fput("    pop rax\n");
+                fput("    pop rbx\n");
+                fput("    mul rbx\n");
+                fput("    push rax\n");
             }
             else if(m->i_type == DIV){
                 fput(";;div\n");
-                fput("pop rbx\n");
-                fput("pop rax\n");
-                fput("div rbx\n");
-                fput("push rax\n");
+                fput("    pop rbx\n");
+                fput("    pop rax\n");
+                fput("    div rbx\n");
+                fput("    push rax\n");
+            }
+            else if(m->i_type == OP_EQ){
+                fput(";;isequal\n");
+                fput("    mov rbx, 1\n");
+                fput("    mov rcx, 0\n");
+                fput("    pop rax\n");
+                fput("    pop rdx\n");
+                fput("    cmp rax,rdx\n");
+                fput("    cmovz rax, rbx\n");
+                fput("    push rax\n");
+            }
+            else if(m->i_type == ST_IF){
+                sprintf(jmp_addr, ".JA%i", jmp_addr_count);
+                jmp_addr_count += 1;
+                fput(";;-----if---\n");
+                fput("    pop rax\n");
+                fput("    cmp rax, 1\n");
+                fput("    jnz %s\n", jmp_addr);
+            }
+            else if(m->i_type == ST_END){
+                fput(";;-----END---\n");
+                fput("    %s:\n", jmp_addr);
             }
         }
     }
@@ -144,44 +170,6 @@ void assert_type(StackMember* m, int expected_type)
 
 void embed_pprint()
 {
-    /* fput("pprint:\n"); */
-    /* fput("sub rsp, 56\n"); */
-    /* fput("mov r9d, 3435973837\n"); */
-    /* fput("lea rax, [rsp+48]\n"); */
-    /* fput("mov BYTE [rsp+47], 10\n"); */
-    /* fput("lea rdx, [rsp+46]\n"); */
-    /* fput("mov QWORD[rsp+8], rax\n"); */
-    /* fput("lea r10d, [rax]\n"); */
-
-    /* fput(".L2:\n"); */
-    /* fput("mov eax, edi\n"); */
-    /* fput("mov ecx, edi\n"); */
-    /* fput("mov r8d, r10d\n"); */
-    /* fput("imul rax, r9\n"); */
-    /* fput("sub r8d, edx\n"); */
-    /* fput("sub rdx, 1\n"); */
-    /* fput("shr rax, 35\n"); */
-    /* fput("lea esi, [rax+rax*4]\n"); */
-    /* fput("add esi, esi\n"); */
-    /* fput("sub ecx, esi\n"); */
-    /* fput("add ecx, 48\n"); */
-    /* fput("mov BYTE [rdx+1], cl\n"); */
-    /* fput("mov ecx, edi\n"); */
-    /* fput("mov edi, eax\n"); */
-    /* fput("cmp ecx, 9\n"); */
-    /* fput("ja .L2\n"); */
-    /* fput("movsx rdx, r8d\n"); */
-    /* fput("mov eax, 32\n"); */
-    /* fput("mov edi, 1\n"); */
-    /* fput("sub rax, rdx\n"); */
-    /* fput("mov edx, r8d\n"); */
-    /* fput("lea rsi, [rsp+16+rax]\n"); */
-    /* fput("xor eax, eax\n"); */
-    /* fput("mov rax, 1 ;; SYS_WRITE\n"); */
-    /* fput("syscall \n"); */
-    /* fput("add rsp, 56\n"); */
-    /* fput("ret\n"); */
-
     fput("pprint:\n");
     fput("sub     rsp, 56\n");
     fput("mov     eax, edi\n");

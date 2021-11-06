@@ -1,11 +1,31 @@
 # getmeout - Stack based language
 
 ```
-push 100
-push 32
-add
-push 2
-div
+push 5
+push 1
+sub
+push 4
+isequal if
+        push 32
+        pprint
+end
+
+push 33
+sub
+push 4
+isequal if
+        push 41
+        pprint
+        exit 0
+end
+
+
+push -1
 pprint
+exit 0
 ```
-`Output: 66`
+`Output:`
+```
+32
+-1
+```

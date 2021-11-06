@@ -1,7 +1,7 @@
 #ifndef PARSER
 #define PARSER
 
-#define MAX_TOKENS 20
+#define MAX_TOKENS 100
 
 int is_digit(char*);
 
@@ -82,6 +82,21 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
             member.type         = INST;
             member.i_type       = EXIT;
         }
+        else if(!strcmp(tokens[i], "isequal")){
+            member.string_value = "isequal";
+            member.type         = STATEMENT;
+            member.i_type       = OP_EQ;
+        }
+        else if(!strcmp(tokens[i], "if")){
+            member.string_value = "if";
+            member.type         = STATEMENT;
+            member.i_type       = ST_IF;
+        }
+        else if(!strcmp(tokens[i], "end")){
+            member.string_value = "end";
+            member.type         = STATEMENT;
+            member.i_type       = ST_END;
+        }
         else{
             printf("Unknown token '%s'\n", tokens[i]);
             exit(-1);
@@ -94,6 +109,9 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
 int is_digit(char* token)
 {
     int is_minus = *token == '-';
+    if(!is_minus){
+        return is_minus || isdigit(token[0]);
+    }
     return is_minus || isdigit(token[1]);
 }
 
