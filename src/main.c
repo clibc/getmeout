@@ -101,6 +101,10 @@ int main(int argc, char** argv)
                 fput("    mov rcx, 0\n");
                 fput("    pop rax\n");
                 fput("    pop rdx\n");
+
+                fput("    push rdx\n");
+                fput("    push rax\n");
+
                 fput("    cmp rax,rdx\n");
                 fput("    cmovz rax, rbx\n");
                 fput("    push rax\n");
