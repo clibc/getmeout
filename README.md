@@ -5,7 +5,7 @@ push 5
 push 1
 sub
 push 4
-isequal if
+== if
         push 32
         pprint
 end
@@ -13,7 +13,7 @@ end
 push 33
 sub
 push 4
-isequal if
+== if
         push 41
         pprint
         exit 0

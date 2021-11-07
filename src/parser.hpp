@@ -82,8 +82,8 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
             member.type         = INST;
             member.i_type       = EXIT;
         }
-        else if(!strcmp(tokens[i], "isequal")){
-            member.string_value = "isequal";
+        else if(!strcmp(tokens[i], "==")){
+            member.string_value = "==";
             member.type         = STATEMENT;
             member.i_type       = OP_EQ;
         }
