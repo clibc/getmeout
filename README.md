@@ -3,29 +3,19 @@
 ```
 push 5
 push 1
-sub
+sub 
 push 4
 == if
-        push 32
+        push 413
         pprint
+        //exit 0
 end
-
-push 33
-sub
-push 4
-== if
-        push 41
-        pprint
-        exit 0
-end
-
-
 push -1
 pprint
 exit 0
 ```
 `Output:`
 ```
-32
+413
 -1
 ```

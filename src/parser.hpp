@@ -4,9 +4,12 @@
 #define MAX_TOKENS 100
 
 int is_digit(char*);
+void strip_commentsss(char*);
 
 void parse_code(char* code, char*** tokens, int* token_count)
 {
+    strip_commentsss(code);
+
     char** tkns = malloc(sizeof(char*) * MAX_TOKENS);
 
     char word_delim[] = " \t\r\n\v\f";
@@ -104,6 +107,29 @@ void get_tokens(Stack* stack, char** tokens, int token_count)
         push(stack, &member);
     }
 
+}
+
+void strip_commentsss(char* string){
+    int i = 0;
+    int slash_count = 0;
+    while(string[i] != '\0'){
+        if(string[i] == '\n'){
+            slash_count = 0;
+            i += 1;
+            continue;
+        }
+        
+        if(string[i] == '/'){
+            string[i] = ' ';
+            slash_count += 1;
+        }
+
+        if(slash_count >= 2){
+            string[i] = ' ';
+        }
+
+        i += 1;
+    }
 }
 
 int is_digit(char* token)
