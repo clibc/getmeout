@@ -1,12 +1,11 @@
 #ifndef STACK_MEM
 #define STACK_MEM
 
-typedef enum
-{
+typedef enum {
     INST,
     LITERAL,
     STATEMENT,
-    
+
     PUSH,
     POP,
     ADD,
@@ -19,25 +18,24 @@ typedef enum
     OP_EQ,
     ST_IF,
     ST_END,
-    
+
     INT,
     FlOAT,
     STRING,
-}TInfo;
+} TInfo;
 
-typedef struct
-{
-    char*           string_value;
+typedef struct {
+    char* string_value;
     TInfo type;
 
     TInfo i_type;
     TInfo l_type;
 
-    union{
+    union {
         int int_value;
         float float_value;
         char* string_value;
-    }sdata;
-}StackMember;
+    } sdata;
+} StackMember;
 
-#endif //STACK_MEM
+#endif  // STACK_MEM
