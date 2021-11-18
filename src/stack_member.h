@@ -16,6 +16,11 @@ typedef enum {
     EXIT,
 
     OP_EQ,
+    OP_GT,
+    OP_LT,
+    OP_GTE,
+    OP_LTE,
+
     ST_IF,
     ST_END,
 

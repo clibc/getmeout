@@ -1,6 +1,8 @@
 #ifndef PARSER
 #define PARSER
 
+#include "stack.hpp"
+
 #define MAX_TOKENS 100
 
 int is_digit( char* );
@@ -79,6 +81,22 @@ void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.string_value = "==";
             member.type         = STATEMENT;
             member.i_type       = OP_EQ;
+        } else if ( !strcmp( tokens[i], ">" ) ) {
+            member.string_value = ">";
+            member.type         = STATEMENT;
+            member.i_type       = OP_GT;
+        } else if ( !strcmp( tokens[i], "<" ) ) {
+            member.string_value = "<";
+            member.type         = STATEMENT;
+            member.i_type       = OP_LT;
+        } else if ( !strcmp( tokens[i], ">=" ) ) {
+            member.string_value = ">=";
+            member.type         = STATEMENT;
+            member.i_type       = OP_GTE;
+        } else if ( !strcmp( tokens[i], "<=" ) ) {
+            member.string_value = "<=";
+            member.type         = STATEMENT;
+            member.i_type       = OP_LTE;
         } else if ( !strcmp( tokens[i], "if" ) ) {
             member.string_value = "if";
             member.type         = STATEMENT;

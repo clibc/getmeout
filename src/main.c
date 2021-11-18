@@ -97,6 +97,50 @@ int main( int argc, char** argv ) {
                 fput( "    cmp rax,rdx\n" );
                 fput( "    cmovz rax, rbx\n" );
                 fput( "    push rax\n" );
+            } else if ( m->i_type == OP_GT ) {
+                fput( ";;isGraterThan\n" );
+                fput( "    mov rbx, 1\n" );
+                fput( "    mov rcx, 0\n" );
+                fput( "    pop rax\n" );
+                fput( "    pop rdx\n" );
+                fput( "    push rdx\n" );
+                fput( "    push rax\n" );
+                fput( "    cmp rax,rdx\n" );
+                fput( "    cmovg rax,rbx\n" );
+                fput( "    push rax\n" );
+            } else if ( m->i_type == OP_LT ) {
+                fput( ";;isLessThan\n" );
+                fput( "    mov rbx, 1\n" );
+                fput( "    mov rcx, 0\n" );
+                fput( "    pop rax\n" );
+                fput( "    pop rdx\n" );
+                fput( "    push rdx\n" );
+                fput( "    push rax\n" );
+                fput( "    cmp rax,rdx\n" );
+                fput( "    cmovl rax,rbx\n" );
+                fput( "    push rax\n" );
+            } else if ( m->i_type == OP_GTE ) {
+                fput( ";;isGraterThanEqual\n" );
+                fput( "    mov rbx, 1\n" );
+                fput( "    mov rcx, 0\n" );
+                fput( "    pop rax\n" );
+                fput( "    pop rdx\n" );
+                fput( "    push rdx\n" );
+                fput( "    push rax\n" );
+                fput( "    cmp rax,rdx\n" );
+                fput( "    cmovge rax,rbx\n" );
+                fput( "    push rax\n" );
+            } else if ( m->i_type == OP_LTE ) {
+                fput( ";;isLessThanEqual\n" );
+                fput( "    mov rbx, 1\n" );
+                fput( "    mov rcx, 0\n" );
+                fput( "    pop rax\n" );
+                fput( "    pop rdx\n" );
+                fput( "    push rdx\n" );
+                fput( "    push rax\n" );
+                fput( "    cmp rax,rdx\n" );
+                fput( "    cmovle rax,rbx\n" );
+                fput( "    push rax\n" );
             } else if ( m->i_type == ST_IF ) {
                 sprintf( jmp_addr, ".JA%i", jmp_addr_count );
                 jmp_addr_count += 1;
@@ -155,8 +199,8 @@ void assert_type( StackMember* m, int expected_type ) {
         exit( -1 );
     }
 }
-#pragma GCC diagnostic pop
 
+#pragma GCC diagnostic pop
 void embed_pprint() {
     fput( "pprint:\n" );
     fput( "sub     rsp, 56\n" );
