@@ -52,7 +52,7 @@ int main( int argc, char** argv ) {
             }
             if ( m->i_type == POP ) {
                 fput( ";; pop\n" );
-                fput( "   add rsp, -4 \n" );
+                fput( "   add rsp, 8 \n" );
             } else if ( m->i_type == EXIT ) {
                 StackMember* arg = pop( &stack );
                 assert_type( arg, LITERAL );
