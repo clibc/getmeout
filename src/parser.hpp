@@ -101,6 +101,10 @@ void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.string_value = "if";
             member.type         = STATEMENT;
             member.i_type       = ST_IF;
+        } else if ( !strcmp( tokens[i], "else" ) ) {
+            member.string_value = "else";
+            member.type         = STATEMENT;
+            member.i_type       = ST_ELSE;
         } else if ( !strcmp( tokens[i], "end" ) ) {
             member.string_value = "end";
             member.type         = STATEMENT;

@@ -33,7 +33,7 @@ int main( int argc, char** argv ) {
     parse_code( code, &tokens, &token_count );
     get_tokens( &stack, tokens, token_count );
 
-    char jmp_addr[5];
+    // char jmp_addr[5];
     int jmp_addr_count = 0;
 
     // compile code
@@ -50,7 +50,10 @@ int main( int argc, char** argv ) {
                 fput( ";; push\n" );
                 fput( "    push %i\n", arg->sdata.int_value );
             }
-            if ( m->i_type == EXIT ) {
+            if ( m->i_type == POP ) {
+                fput( ";; pop\n" );
+                fput( "   add rsp, -4 \n" );
+            } else if ( m->i_type == EXIT ) {
                 StackMember* arg = pop( &stack );
                 assert_type( arg, LITERAL );
                 fput( ";; exit --- \n" );
@@ -147,15 +150,17 @@ int main( int argc, char** argv ) {
                 fput( "    cmovle rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == ST_IF ) {
-                sprintf( jmp_addr, ".JA%i", jmp_addr_count );
-                jmp_addr_count += 1;
                 fput( ";;-----if---\n" );
                 fput( "    pop rax\n" );
                 fput( "    cmp rax, 1\n" );
-                fput( "    jnz %s\n", jmp_addr );
+                fput( "    jnz .JA%i\n", ++jmp_addr_count );  // else adr
+            } else if ( m->i_type == ST_ELSE ) {
+                fput( ";;-----ELSE---\n" );
+                fput( "   jmp .JA%i\n", jmp_addr_count - 1 );
+                fput( "   .JA%i:\n", jmp_addr_count );  // else
             } else if ( m->i_type == ST_END ) {
                 fput( ";;-----END---\n" );
-                fput( "    %s:\n", jmp_addr );
+                fput( "    .JA%i:\n", jmp_addr_count - 1 );
             }
         }
     }

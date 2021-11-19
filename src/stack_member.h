@@ -22,6 +22,7 @@ typedef enum {
     OP_LTE,
 
     ST_IF,
+    ST_ELSE,
     ST_END,
 
     INT,
