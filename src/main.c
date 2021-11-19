@@ -95,6 +95,7 @@ int main( int argc, char** argv ) {
                 fput( "    push rdx\n" );
                 fput( "    push rax\n" );
                 fput( "    cmp rax,rdx\n" );
+                fput( "    mov rax,0\n" );
                 fput( "    cmovz rax, rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == OP_GT ) {
@@ -106,6 +107,7 @@ int main( int argc, char** argv ) {
                 fput( "    push rdx\n" );
                 fput( "    push rax\n" );
                 fput( "    cmp rax,rdx\n" );
+                fput( "    mov rax, 0\n" );
                 fput( "    cmovg rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == OP_LT ) {
@@ -117,6 +119,7 @@ int main( int argc, char** argv ) {
                 fput( "    push rdx\n" );
                 fput( "    push rax\n" );
                 fput( "    cmp rax,rdx\n" );
+                fput( "    mov rax,0\n" );
                 fput( "    cmovl rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == OP_GTE ) {
@@ -128,6 +131,7 @@ int main( int argc, char** argv ) {
                 fput( "    push rdx\n" );
                 fput( "    push rax\n" );
                 fput( "    cmp rax,rdx\n" );
+                fput( "    mov rax,0\n" );
                 fput( "    cmovge rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == OP_LTE ) {
@@ -139,6 +143,7 @@ int main( int argc, char** argv ) {
                 fput( "    push rdx\n" );
                 fput( "    push rax\n" );
                 fput( "    cmp rax,rdx\n" );
+                fput( "    mov rax,0\n" );
                 fput( "    cmovle rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == ST_IF ) {
