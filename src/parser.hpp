@@ -5,10 +5,10 @@
 
 #define MAX_TOKENS 100
 
-int is_digit( char* );
-void strip_commentsss( char* );
+static int is_digit( char* );
+static void strip_commentsss( char* );
 
-void parse_code( char* code, char*** tokens, int* token_count ) {
+static void parse_code( char* code, char*** tokens, int* token_count ) {
     strip_commentsss( code );
 
     char** tkns = malloc( sizeof( char* ) * MAX_TOKENS );
@@ -35,7 +35,7 @@ void parse_code( char* code, char*** tokens, int* token_count ) {
     *token_count = t_count;
 }
 
-void get_tokens( Stack* stack, char** tokens, int token_count ) {
+static void get_tokens( Stack* stack, char** tokens, int token_count ) {
     for ( int i = token_count - 1; i >= 0; --i ) {
         StackMember member;
         if ( !strcmp( tokens[i], "push" ) ) {
@@ -117,7 +117,7 @@ void get_tokens( Stack* stack, char** tokens, int token_count ) {
     }
 }
 
-void strip_commentsss( char* string ) {
+static void strip_commentsss( char* string ) {
     int i           = 0;
     int slash_count = 0;
     while ( string[i] != '\0' ) {
@@ -140,7 +140,7 @@ void strip_commentsss( char* string ) {
     }
 }
 
-int is_digit( char* token ) {
+static int is_digit( char* token ) {
     int is_minus = *token == '-';
     if ( !is_minus ) {
         return is_minus || isdigit( token[0] );

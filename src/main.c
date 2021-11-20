@@ -49,8 +49,7 @@ int main( int argc, char** argv ) {
                 assert_type( arg, LITERAL );
                 fput( ";; push\n" );
                 fput( "    push %i\n", arg->sdata.int_value );
-            }
-            if ( m->i_type == POP ) {
+            } else if ( m->i_type == POP ) {
                 fput( ";; pop\n" );
                 fput( "   add rsp, 8 \n" );
             } else if ( m->i_type == EXIT ) {
@@ -209,8 +208,8 @@ void assert_type( StackMember* m, int expected_type ) {
         exit( -1 );
     }
 }
-
 #pragma GCC diagnostic pop
+
 void embed_pprint() {
     fput( "pprint:\n" );
     fput( "sub     rsp, 56\n" );
