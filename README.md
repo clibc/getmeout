@@ -1,4 +1,4 @@
-# getmeout - Stack based language
+# getmeout - Stack-oriented programming language
 
 ```
 push 5
