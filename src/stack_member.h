@@ -25,6 +25,11 @@ typedef enum {
     ST_ELSE,
     ST_END,
 
+    ST_FOR,
+    ST_LOOP,
+
+    VAR_FORINDEX,
+
     INT,
     FlOAT,
     STRING,

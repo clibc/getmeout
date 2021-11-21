@@ -46,6 +46,11 @@ int main( int argc, char** argv ) {
         if ( m->type == INST || m->type == STATEMENT ) {
             if ( m->i_type == PUSH ) {
                 StackMember* arg = pop( &stack );
+                if ( arg->i_type == VAR_FORINDEX ) {
+                    fput( ";;  push i\n" );
+                    fput( "    push rsi\n" );
+                    continue;
+                }
                 assert_type( arg, LITERAL );
                 fput( ";; push\n" );
                 fput( "    push %i\n", arg->sdata.int_value );
@@ -149,17 +154,32 @@ int main( int argc, char** argv ) {
                 fput( "    cmovle rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == ST_IF ) {
+                jmp_addr_count += 3;
                 fput( ";;-----if---\n" );
                 fput( "    pop rax\n" );
                 fput( "    cmp rax, 1\n" );
-                fput( "    jnz .JA%i\n", ++jmp_addr_count );  // else adr
+                fput( "    jnz .JA%i\n", jmp_addr_count - 1 );  // else adr
             } else if ( m->i_type == ST_ELSE ) {
                 fput( ";;-----ELSE---\n" );
-                fput( "   jmp .JA%i\n", jmp_addr_count - 1 );
-                fput( "   .JA%i:\n", jmp_addr_count );  // else
+                fput( "   jmp .JA%i\n", jmp_addr_count );
+                fput( "   .JA%i:\n", jmp_addr_count - 1 );  // else
             } else if ( m->i_type == ST_END ) {
                 fput( ";;-----END---\n" );
-                fput( "    .JA%i:\n", jmp_addr_count - 1 );
+                fput( "    .JA%i:\n", jmp_addr_count );
+            } else if ( m->i_type == ST_FOR ) {
+                jmp_addr_count += 3;
+                fput( ";; FOR ------\n" );
+                fput( "pop rsi\n" );
+                fput( "pop rax\n" );
+                fput( "sub rsi, rax\n" );
+                fput( ".JA%i:\n", jmp_addr_count - 2 );
+                fput( "cmp rsi, 0\n" );
+                fput( "jge .JA%i\n", jmp_addr_count - 1 );
+            } else if ( m->i_type == ST_LOOP ) {
+                fput( ";; LOOP ------\n" );
+                fput( " inc rsi\n" );
+                fput( " jmp .JA%i\n", jmp_addr_count - 2 );
+                fput( " .JA%i:\n", jmp_addr_count - 1 );
             }
         }
     }
@@ -211,7 +231,9 @@ void assert_type( StackMember* m, int expected_type ) {
 #pragma GCC diagnostic pop
 
 void embed_pprint() {
+    fput( "\n\n" );
     fput( "pprint:\n" );
+    fput( "push rsi\n" );  // save rsi since it is used to keep loop index
     fput( "sub     rsp, 56\n" );
     fput( "mov     eax, edi\n" );
     fput( "mov     r8d, 1\n" );
@@ -253,5 +275,6 @@ void embed_pprint() {
     fput( "mov rax, 1 ;; SYS_WRITE\n" );
     fput( "syscall \n" );
     fput( "add     rsp, 56\n" );
+    fput( "pop rsi\n" );
     fput( "ret\n" );
 }

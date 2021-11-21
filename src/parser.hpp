@@ -109,6 +109,18 @@ static void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.string_value = "end";
             member.type         = STATEMENT;
             member.i_type       = ST_END;
+        } else if ( !strcmp( tokens[i], "for" ) ) {
+            member.string_value = "for";
+            member.type         = STATEMENT;
+            member.i_type       = ST_FOR;
+        } else if ( !strcmp( tokens[i], "loop" ) ) {
+            member.string_value = "loop";
+            member.type         = STATEMENT;
+            member.i_type       = ST_LOOP;
+        } else if ( !strcmp( tokens[i], "i" ) ) {
+            member.string_value = "i";
+            member.type         = STATEMENT;
+            member.i_type       = VAR_FORINDEX;
         } else {
             printf( "Unknown token '%s'\n", tokens[i] );
             exit( -1 );
