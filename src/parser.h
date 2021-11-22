@@ -1,7 +1,7 @@
 #ifndef PARSER
 #define PARSER
 
-#include "stack.hpp"
+#include "stack.h"
 
 #define MAX_TOKENS 100
 

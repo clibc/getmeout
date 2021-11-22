@@ -45,7 +45,7 @@ _start:
     push rdx
     push rax
     cmp rax,rdx
-    cmovz rax, rbx
+        cmovz rax, rbx
     push rax
 ;;-----if---
     pop rax

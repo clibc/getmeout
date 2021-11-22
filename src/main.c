@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "file.hpp"
-#include "parser.hpp"
-#include "stack.hpp"
+#include "file.h"
+#include "parser.h"
+#include "stack.h"
 #include "stack_member.h"
 
 void assert_type( StackMember*, int );
@@ -16,9 +16,7 @@ int main( int argc, char** argv ) {
         printf( "Provide a source file\n" );
         exit( -1 );
     } else if ( argc == 2 ) {
-        // load file
         code = load_file( argv[1] );
-        // printf("%s\n", file_content);
     } else {
         printf( "Unrecognized agruments\n" );
         exit( -1 );
@@ -158,14 +156,15 @@ int main( int argc, char** argv ) {
                 fput( ";;-----if---\n" );
                 fput( "    pop rax\n" );
                 fput( "    cmp rax, 1\n" );
-                fput( "    jnz .JA%i\n", jmp_addr_count - 1 );  // else adr
+                fput( "    jnz .JA%i\n", jmp_addr_count - 2 );  // else adr
             } else if ( m->i_type == ST_ELSE ) {
                 fput( ";;-----ELSE---\n" );
-                fput( "   jmp .JA%i\n", jmp_addr_count );
-                fput( "   .JA%i:\n", jmp_addr_count - 1 );  // else
+                fput( "   jmp .JA%i\n", jmp_addr_count - 1 );
+                fput( "   .JA%i:\n", jmp_addr_count - 2 );  // else
             } else if ( m->i_type == ST_END ) {
                 fput( ";;-----END---\n" );
-                fput( "    .JA%i:\n", jmp_addr_count );
+                fput( "    .JA%i:\n", jmp_addr_count - 1 );
+                jmp_addr_count -= 3;
             } else if ( m->i_type == ST_FOR ) {
                 jmp_addr_count += 3;
                 fput( ";; FOR ------\n" );
@@ -180,6 +179,7 @@ int main( int argc, char** argv ) {
                 fput( " inc rsi\n" );
                 fput( " jmp .JA%i\n", jmp_addr_count - 2 );
                 fput( " .JA%i:\n", jmp_addr_count - 1 );
+                jmp_addr_count -= 3;
             }
         }
     }
