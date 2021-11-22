@@ -53,4 +53,8 @@ void* pop( Stack* s ) {
     return retval;
 }
 
+void* get_element_at( Stack* s, int index ) {
+    return (char*)s->base + ( s->member_size * index );
+}
+
 #endif  // STACK_HPP

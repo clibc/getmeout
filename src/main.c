@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "stack.h"
 #include "stack_member.h"
+#include "cross_referencer.h"
 
 void assert_type( StackMember*, int );
 void embed_pprint();
@@ -30,6 +31,8 @@ int main( int argc, char** argv ) {
     int token_count = 0;
     parse_code( code, &tokens, &token_count );
     get_tokens( &stack, tokens, token_count );
+    cross_ref( &stack );
+    return 0;
 
     // char jmp_addr[5];
     int jmp_addr_count = 0;
