@@ -47,6 +47,9 @@ typedef struct {
         float float_value;
         char* string_value;
     } sdata;
+
+    unsigned int defined_address;
+    unsigned int jump_address;
 } StackMember;
 
 #endif  // STACK_MEM

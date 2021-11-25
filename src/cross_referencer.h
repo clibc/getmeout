@@ -3,22 +3,41 @@
 
 #include <stdio.h>
 #include "stack.h"
+#include "stack_member.h"
 
 static void cross_ref( Stack* token_stack ) {
-    int count = 0;
-    int depth = 0;
+    Stack s = create_stack( sizeof( StackMember ) );
 
-    for ( int i = token_stack->item_count - 1; i >= 0; --i ) {
-        count += 1;
-
+    for ( unsigned int i = token_stack->item_count - 1; (int)i != -1; --i ) {
         StackMember* m = get_element_at( token_stack, i );
-        if ( m->type == ST_IF ) {
-            depth += 1;
 
-        } else if ( m->type == ST_ELSE ) {
+        if ( m->i_type == ST_IF ) {
+            m->jump_address = i;
+            push( &s, (void*)m );
+        } else if ( m->i_type == ST_ELSE ) {
+            StackMember* if_token = pop( &s );
+            if ( if_token == NULL ) {
+                // TODO: Handle error
+                printf( "if is missing" );
+                exit( -1 );
+            }
+            m->defined_address = if_token->jump_address;
+            m->jump_address    = i;
+            push( &s, (void*)m );
             //// doooooo
-        } else if ( m->type == ST_END ) {
-            depth -= 1;
+        } else if ( m->i_type == ST_END ) {
+            StackMember* token = pop( &s );
+            if ( token == NULL ) {
+                // TODO: Handle error
+                printf( "if/else is missing" );
+                exit( -1 );
+            }
+            m->defined_address = token->jump_address;
+        } else if ( m->i_type == ST_FOR ) {
+            m->defined_address = i;
+            push( &s, (void*)m );
+
+        } else if ( m->i_type == ST_LOOP ) {
         }
     }
 }

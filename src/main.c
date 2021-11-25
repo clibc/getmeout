@@ -32,9 +32,7 @@ int main( int argc, char** argv ) {
     parse_code( code, &tokens, &token_count );
     get_tokens( &stack, tokens, token_count );
     cross_ref( &stack );
-    return 0;
 
-    // char jmp_addr[5];
     int jmp_addr_count = 0;
 
     // compile code
@@ -155,21 +153,18 @@ int main( int argc, char** argv ) {
                 fput( "    cmovle rax,rbx\n" );
                 fput( "    push rax\n" );
             } else if ( m->i_type == ST_IF ) {
-                jmp_addr_count += 3;
                 fput( ";;-----if---\n" );
                 fput( "    pop rax\n" );
                 fput( "    cmp rax, 1\n" );
-                fput( "    jnz .JA%i\n", jmp_addr_count - 2 );  // else adr
+                fput( "    jnz .JA%i\n", m->jump_address );  // else adr
             } else if ( m->i_type == ST_ELSE ) {
                 fput( ";;-----ELSE---\n" );
-                fput( "   jmp .JA%i\n", jmp_addr_count - 1 );
-                fput( "   .JA%i:\n", jmp_addr_count - 2 );  // else
+                fput( "   jmp .JA%i\n", m->jump_address );
+                fput( "   .JA%i:\n", m->defined_address );  // else
             } else if ( m->i_type == ST_END ) {
                 fput( ";;-----END---\n" );
-                fput( "    .JA%i:\n", jmp_addr_count - 1 );
-                jmp_addr_count -= 3;
+                fput( "    .JA%i:\n", m->defined_address );
             } else if ( m->i_type == ST_FOR ) {
-                jmp_addr_count += 3;
                 fput( ";; FOR ------\n" );
                 fput( "pop rsi\n" );
                 fput( "pop rax\n" );
