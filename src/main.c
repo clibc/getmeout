@@ -169,14 +169,14 @@ int main( int argc, char** argv ) {
                 fput( "pop rsi\n" );
                 fput( "pop rax\n" );
                 fput( "sub rsi, rax\n" );
-                fput( ".JA%i:\n", jmp_addr_count - 2 );
+                fput( ".JA%i:\n", m->defined_address );
                 fput( "cmp rsi, 0\n" );
-                fput( "jge .JA%i\n", jmp_addr_count - 1 );
+                fput( "jge .JA%i\n", m->jump_address );
             } else if ( m->i_type == ST_LOOP ) {
                 fput( ";; LOOP ------\n" );
                 fput( " inc rsi\n" );
-                fput( " jmp .JA%i\n", jmp_addr_count - 2 );
-                fput( " .JA%i:\n", jmp_addr_count - 1 );
+                fput( " jmp .JA%i\n", m->jump_address );
+                fput( " .JA%i:\n", m->defined_address );
                 jmp_addr_count -= 3;
             }
         }

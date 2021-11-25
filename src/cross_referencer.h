@@ -38,6 +38,17 @@ static void cross_ref( Stack* token_stack ) {
             push( &s, (void*)m );
 
         } else if ( m->i_type == ST_LOOP ) {
+            StackMember* for_token = pop( &s );
+            if ( for_token == NULL ) {
+                // TODO: Handle error
+                printf( "for is missing" );
+                exit( -1 );
+            }
+            m->jump_address    = for_token->defined_address;
+            m->defined_address = i;
+
+            StackMember* old_for  = get_element_at( token_stack, for_token->defined_address );
+            old_for->jump_address = m->defined_address;
         }
     }
 }
