@@ -1,0 +1,8 @@
+push 2
+push 2
+== if
+   add
+else
+    sub
+end
+exit 0

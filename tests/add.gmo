@@ -1,0 +1,4 @@
+push 4
+push 2
+add
+exit 0

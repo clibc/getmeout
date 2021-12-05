@@ -174,7 +174,7 @@ int main( int argc, char** argv ) {
 
                 fput( ".JA%i:\n", m->defined_address );
                 fput( "cmp rax, rbx\n" );
-                fput( "jge .JA%i\n", m->jump_address );
+                fput( "jg .JA%i\n", m->jump_address );
             } else if ( m->i_type == ST_LOOP ) {
                 fput( ";; LOOP ------\n" );
                 fput( "mov rax, [LPPI%i]\n", m->loopIndexMemRef );
