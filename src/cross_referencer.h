@@ -4,9 +4,15 @@
 #include <stdio.h>
 #include "stack.h"
 #include "stack_member.h"
+#include "file.h"
+
+static void put_loop_vars_to_data_seg( int );
 
 static void cross_ref( Stack* token_stack ) {
-    Stack s = create_stack( sizeof( StackMember ) );
+    Stack s       = create_stack( sizeof( StackMember ) );
+    int loopIndex = -1;
+
+    int total_loop_count = 0;
 
     for ( unsigned int i = token_stack->item_count - 1; (int)i != -1; --i ) {
         StackMember* m = get_element_at( token_stack, i );
@@ -36,7 +42,8 @@ static void cross_ref( Stack* token_stack ) {
         } else if ( m->i_type == ST_FOR ) {
             m->defined_address = i;
             push( &s, (void*)m );
-
+            m->loopIndexMemRef = ++loopIndex;
+            total_loop_count += 1;
         } else if ( m->i_type == ST_LOOP ) {
             StackMember* for_token = pop( &s );
             if ( for_token == NULL ) {
@@ -49,7 +56,20 @@ static void cross_ref( Stack* token_stack ) {
 
             StackMember* old_for  = get_element_at( token_stack, for_token->defined_address );
             old_for->jump_address = m->defined_address;
+            m->loopIndexMemRef    = loopIndex--;
+        } else if ( m->i_type == VAR_FORINDEX ) {
+            m->loopIndexMemRef = loopIndex;
         }
+    }
+    put_loop_vars_to_data_seg( total_loop_count );
+}
+
+static void put_loop_vars_to_data_seg( int total_loop_count ) {
+    fput( "segment .data\n" );
+
+    for ( int i = 0; i < total_loop_count; ++i ) {
+        fput( "LPPE%i dq 0\n", i );
+        fput( "LPPI%i dq 0\n", i );
     }
 }
 

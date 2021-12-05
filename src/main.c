@@ -31,12 +31,10 @@ int main( int argc, char** argv ) {
     int token_count = 0;
     parse_code( code, &tokens, &token_count );
     get_tokens( &stack, tokens, token_count );
-    cross_ref( &stack );
 
-    int jmp_addr_count = 0;
-
-    // compile code
     fput( "BITS 64\n" );
+    cross_ref( &stack );  // may add data segment
+    // compile code
     fput( "segment .text\n" );
     fput( "global _start\n" );
     fput( "_start:\n" );
@@ -47,7 +45,8 @@ int main( int argc, char** argv ) {
                 StackMember* arg = pop( &stack );
                 if ( arg->i_type == VAR_FORINDEX ) {
                     fput( ";;  push i\n" );
-                    fput( "    push rsi\n" );
+                    fput( "mov rax, [LPPI%i]\n", arg->loopIndexMemRef );
+                    fput( "push rax\n" );
                     continue;
                 }
                 assert_type( arg, LITERAL );
@@ -166,18 +165,25 @@ int main( int argc, char** argv ) {
                 fput( "    .JA%i:\n", m->defined_address );
             } else if ( m->i_type == ST_FOR ) {
                 fput( ";; FOR ------\n" );
-                fput( "pop rsi\n" );
                 fput( "pop rax\n" );
-                fput( "sub rsi, rax\n" );
+                fput( "pop rbx\n" );
+                fput( "push rbx\n" );
+                fput( "push rax\n" );
+                fput( "mov [LPPE%i], rbx\n", m->loopIndexMemRef );
+                fput( "mov [LPPI%i], rax\n", m->loopIndexMemRef );
+
                 fput( ".JA%i:\n", m->defined_address );
-                fput( "cmp rsi, 0\n" );
+                fput( "cmp rax, rbx\n" );
                 fput( "jge .JA%i\n", m->jump_address );
             } else if ( m->i_type == ST_LOOP ) {
                 fput( ";; LOOP ------\n" );
-                fput( " inc rsi\n" );
-                fput( " jmp .JA%i\n", m->jump_address );
-                fput( " .JA%i:\n", m->defined_address );
-                jmp_addr_count -= 3;
+                fput( "mov rax, [LPPI%i]\n", m->loopIndexMemRef );
+                fput( "mov rbx, [LPPE%i]\n", m->loopIndexMemRef );
+                fput( "inc rax\n" );
+                fput( "mov [LPPI%i], rax \n", m->loopIndexMemRef );
+
+                fput( "jmp .JA%i\n", m->jump_address );
+                fput( ".JA%i:\n", m->defined_address );
             }
         }
     }

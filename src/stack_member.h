@@ -36,6 +36,12 @@ typedef enum {
 } TInfo;
 
 typedef struct {
+    int index;
+    int start;
+    int end;
+} LoopInfo;
+
+typedef struct {
     char* string_value;
     TInfo type;
 
@@ -50,6 +56,7 @@ typedef struct {
 
     unsigned int defined_address;
     unsigned int jump_address;
+    unsigned int loopIndexMemRef;
 } StackMember;
 
 #endif  // STACK_MEM
