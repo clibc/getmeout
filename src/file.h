@@ -43,7 +43,7 @@ static char* read_entire_file( const char* filePath, int* size ) {
         fread( Buffer, sizeof( char ), Size, File );
         Buffer[Size] = '\0';
     } else {
-        printf( "File is not found: %s", filePath );
+        printf( "File is not found: %s\n", filePath );
         exit( 1 );
     }
     *size = Size;
