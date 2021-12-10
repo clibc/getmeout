@@ -91,6 +91,11 @@ int main( int argc, char** argv ) {
                 fput( "    pop rax\n" );
                 fput( "    div rbx\n" );
                 fput( "    push rax\n" );
+            } else if ( m->i_type == DUP ) {
+                fput( ";;div\n" );
+                fput( "    pop rbx\n" );
+                fput( "    push rbx\n" );
+                fput( "    push rbx\n" );
             } else if ( m->i_type == OP_EQ ) {
                 fput( ";;isequal\n" );
                 fput( "    mov rbx, 1\n" );

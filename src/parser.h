@@ -73,6 +73,10 @@ static void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.string_value = "div";
             member.type         = INST;
             member.i_type       = DIV;
+        } else if ( !strcmp( tokens[i], "dup" ) ) {
+            member.string_value = "dup";
+            member.type         = INST;
+            member.i_type       = DUP;
         } else if ( !strcmp( tokens[i], "exit" ) ) {
             member.string_value = "exit";
             member.type         = INST;
