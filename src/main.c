@@ -242,7 +242,6 @@ void assert_type( StackMember* m, int expected_type ) {
 void embed_pprint() {
     fput( "\n\n" );
     fput( "pprint:\n" );
-    fput( "push rsi\n" );  // save rsi since it is used to keep loop index
     fput( "sub     rsp, 56\n" );
     fput( "mov     eax, edi\n" );
     fput( "mov     r8d, 1\n" );
@@ -284,6 +283,5 @@ void embed_pprint() {
     fput( "mov rax, 1 ;; SYS_WRITE\n" );
     fput( "syscall \n" );
     fput( "add     rsp, 56\n" );
-    fput( "pop rsi\n" );
     fput( "ret\n" );
 }
