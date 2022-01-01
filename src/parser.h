@@ -59,6 +59,10 @@ static void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.string_value = "pprint";
             member.type         = INST;
             member.i_type       = PPRINT;
+        } else if ( !strcmp( tokens[i], "strprint" ) ) {
+            member.string_value = "strprint";
+            member.type         = INST;
+            member.i_type       = STRPRINT;
         } else if ( is_digit( tokens[i] ) ) {
             int digit              = atoi( tokens[i] );
             member.string_value    = tokens[i];

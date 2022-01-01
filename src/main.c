@@ -7,8 +7,8 @@
 #include "stack.h"
 #include "stack_member.h"
 #include "cross_referencer.h"
+#include "assertion.h"
 
-void assert_type( StackMember*, int );
 void embed_pprint();
 
 int main( int argc, char** argv ) {
@@ -83,6 +83,15 @@ int main( int argc, char** argv ) {
                 fput( "    pop rdi\n" );
                 fput( "    push rdi\n" );
                 fput( "    call pprint\n" );
+            } else if ( m->i_type == STRPRINT ) {
+                StackMember* arg = pop( &stack );
+                assert_itype( arg, STRING );
+                fput( ";;stringprint\n" );
+                fput( "    mov rax, 1\n" );
+                fput( "    mov rdi, 1\n" );
+                fput( "    mov rsi, str%i\n", arg->string_id_value );
+                fput( "    mov rdx, strLen%i\n", arg->string_id_value );
+                fput( "    syscall\n" );
             } else if ( m->i_type == MUL ) {
                 fput( ";;mul\n" );
                 fput( "    pop rax\n" );
@@ -208,40 +217,6 @@ int main( int argc, char** argv ) {
 
     return 0;
 }
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch"
-void assert_type( StackMember* m, int expected_type ) {
-    if ( m->type != (TInfo)expected_type ) {
-        printf( "Expected type " );
-        switch ( expected_type ) {
-            case INST:
-                printf( "INST " );
-                break;
-            case LITERAL:
-                printf( "LITERAL " );
-                break;
-            default:
-                printf( "UNDEFINED " );
-                break;
-        }
-        printf( "but got " );
-        switch ( m->type ) {
-            case INST:
-                printf( "INST " );
-                break;
-            case LITERAL:
-                printf( "LITERAL " );
-                break;
-            default:
-                printf( "UNDEFINED " );
-                break;
-        }
-        printf( "\n" );
-        exit( -1 );
-    }
-}
-#pragma GCC diagnostic pop
 
 void embed_pprint() {
     fput( "\n\n" );

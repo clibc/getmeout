@@ -14,6 +14,7 @@ typedef enum {
     DIV,
     DUP,
     PPRINT,
+    STRPRINT,
     EXIT,
 
     OP_EQ,
