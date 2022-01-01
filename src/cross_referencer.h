@@ -78,7 +78,6 @@ static void put_strings_into_data_seg( Stack* stack ) {
             fput( "str%i db %s\n", string_id, member->string_value );
             fput( "strLen%i equ $- str%i\n", string_id, string_id );
             member->string_id_value = string_id;
-            printf( "String is detected2 %s\n", member->string_value );
 
             string_id += 1;
         }

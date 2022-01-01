@@ -131,9 +131,6 @@ static void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.i_type       = STRING;
 
             // @TODO: put "less string value int sdata string_value
-
-            printf( "String is detected %s\n", tokens[i] );
-
         } else {
             printf( "Unknown token '%s'\n", tokens[i] );
             exit( -1 );
