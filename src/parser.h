@@ -2,6 +2,7 @@
 #define PARSER
 
 #include "stack.h"
+#include "cross_referencer.h"
 
 #define MAX_TOKENS 100
 
@@ -59,8 +60,7 @@ static void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.type         = INST;
             member.i_type       = PPRINT;
         } else if ( is_digit( tokens[i] ) ) {
-            int digit = atoi( tokens[i] );
-
+            int digit              = atoi( tokens[i] );
             member.string_value    = tokens[i];
             member.type            = LITERAL;
             member.i_type          = INT;
@@ -125,6 +125,15 @@ static void get_tokens( Stack* stack, char** tokens, int token_count ) {
             member.string_value = "i";
             member.type         = STATEMENT;
             member.i_type       = VAR_FORINDEX;
+        } else if ( tokens[i][0] == '"' ) {
+            member.string_value = tokens[i];
+            member.type         = LITERAL;
+            member.i_type       = STRING;
+
+            // @TODO: put "less string value int sdata string_value
+
+            printf( "String is detected %s\n", tokens[i] );
+
         } else {
             printf( "Unknown token '%s'\n", tokens[i] );
             exit( -1 );
@@ -142,16 +151,13 @@ static void strip_commentsss( char* string ) {
             i += 1;
             continue;
         }
-
         if ( string[i] == '/' ) {
             string[i] = ' ';
             slash_count += 1;
         }
-
         if ( slash_count >= 2 ) {
             string[i] = ' ';
         }
-
         i += 1;
     }
 }
@@ -163,5 +169,4 @@ static int is_digit( char* token ) {
     }
     return is_minus || isdigit( token[1] );
 }
-
 #endif  // PARSER

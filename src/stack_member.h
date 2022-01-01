@@ -57,7 +57,8 @@ typedef struct {
 
     unsigned int defined_address;
     unsigned int jump_address;
-    unsigned int loopIndexMemRef;
+    unsigned int loop_index_mem_ref;
+    unsigned int string_id_value;
 } StackMember;
 
 #endif  // STACK_MEM
