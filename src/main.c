@@ -213,7 +213,7 @@ int main( int argc, char** argv ) {
     embed_pprint();
 
     close_file();
-    compile_file();
+    //compile_file();
 
     return 0;
 }
