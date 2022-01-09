@@ -1,0 +1,12 @@
+push 10
+push 0
+
+for
+    push i
+    push 0
+    for
+        strprint "*"
+    loop
+    strprint "\n"
+loop
+exit 0

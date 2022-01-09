@@ -6,5 +6,6 @@ depends/
 *.dll
 *.lib
 .vscode/
-*.gmo
+test.gmo
 *.asm
+.vs/
