@@ -8,7 +8,7 @@
 
 static void put_loop_vars_to_data_seg( int );
 static void put_strings_into_data_seg( Stack* );
-static int scan_string_newlines( char*, int );
+static char* scan_string_newlines( char*, int );
 
 static void cross_ref( Stack* token_stack ) {
     Stack s       = create_stack( sizeof( StackMember ) );
@@ -92,28 +92,9 @@ static void put_strings_into_data_seg( Stack* stack ) {
         StackMember* member = (StackMember*)stack->base + i;
 
         if ( member->i_type == STRING ) {
-            int newlines = scan_string_newlines( member->string_value, (int)strlen( member->string_value ) );
-            char* string = member->string_value;
-
-            if ( newlines == 0 ) {
-                fput( "str%i db %s\n", string_id, string );
-            } else {
-                fput( "str%i db ", string_id );
-                char* string      = member->string_value;
-                int string_lenght = strlen( string );
-                fput( "%s\",10,", string );
-                string += string_lenght + 2;  // one for n ( in "\n" )
-
-                for ( int j = 0; j < newlines; ++j ) {
-                    int string_lenght = strlen( string );
-                    if ( j == 0 ) {
-                        fput( "\"%s", string );
-                    } else
-                        fput( ",10,%s", string );
-                    string += string_lenght + 2;  // + 2 for \n
-                }
-                fput( "\n" );
-            }
+            char* new_string = scan_string_newlines( member->string_value, (int)strlen( member->string_value ) );
+            if( new_string != NULL ) member->string_value = new_string;
+            fput( "str%i db %s\n", string_id, member->string_value );
             fput( "strLen%i equ $- str%i\n", string_id, string_id );
             member->string_id_value = string_id;
             string_id += 1;
@@ -121,24 +102,84 @@ static void put_strings_into_data_seg( Stack* stack ) {
     }
 }
 
-static int scan_string_newlines( char* string, int size ) {
-    int counted_newlines = 0;
+static char* scan_string_newlines( char* string, int size ) {
+    int start_nl_count = 0;
+    int middle_nl_count = 0;
+    int end_nl_count = 0;
+    
     for ( int i = 0; i < size; ++i ) {
         char letter = *( string + i );
 
         if ( letter == '\\' ) {  // backslash detected search for n
             char next_letter = *( string + i + 1 );
             if ( next_letter == 'n' ) {  // match
-                *( string + i )     = 0;
-                *( string + i + 1 ) = 0;
-                counted_newlines += 1;
-            } else {
-                i += 1;
+                if( i == 1 ) start_nl_count = 1;
+                else if( i == size - 3 ) end_nl_count = 1;
+                else middle_nl_count += 1;
             }
         }
     }
 
-    return counted_newlines;
+    int new_string_size = start_nl_count * 3 + middle_nl_count * 6 + end_nl_count * 3 + ( size - (start_nl_count + middle_nl_count + end_nl_count) * 2 );
+    if( new_string_size == size ) { // we did not encounter any new lines
+        return NULL;
+    }
+
+    int iter, start_pos, end_pos = 0;
+    
+    char* new_string = ( char* ) malloc( new_string_size + 1 );
+    new_string[new_string_size] = 0;
+
+    if( start_nl_count ){
+        new_string[0] = '1';
+        new_string[1] = '0';
+        new_string[2] = ',';
+        new_string[3] = '\"';
+
+        start_pos = 4;
+    }
+    else {
+        new_string[0] = '\"';
+        start_pos = 1;
+    }
+    
+    if( end_nl_count ){
+        new_string[ new_string_size - 1 ] = '0';
+        new_string[ new_string_size - 2 ]  = '1';
+        new_string[ new_string_size - 3 ]  = ',';
+        new_string[ new_string_size - 4 ]  = '\"';
+
+        end_pos = new_string_size - 4;
+    }
+    else {
+        new_string[new_string_size - 1] = '\"';
+        end_pos = new_string_size - 1;
+    }
+    
+    iter = 1 + start_nl_count * 2; // store index for old string & skip " , so it is 1
+    for( int i = start_pos; i < end_pos; ++i ) {
+        char letter = *( string + iter );
+
+        if( letter == '\\' ) {
+            char next_letter = *( string + iter + 1 );
+            if( next_letter == 'n' ) {
+                iter += 2;
+
+                *( new_string + i ) = '\"';
+                *( new_string + i + 1 ) = ',';
+                *( new_string + i + 2 ) = '1';
+                *( new_string + i + 3 ) = '0';
+                *( new_string + i + 4 ) = ',';
+                *( new_string + i + 5 ) = '\"';
+                i += 5;
+                continue;
+            }
+        }
+
+        *( new_string + i ) = letter;
+        iter += 1;
+    }
+    return new_string;
 }
 
 static void put_loop_vars_to_data_seg( int total_loop_count ) {
