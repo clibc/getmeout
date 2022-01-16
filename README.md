@@ -1,70 +1,103 @@
 # getmeout - Stack-oriented programming language
 
 ```
-push 5
-push 1
-sub 
-push 4
-== if
-        push 413
-        pprint
-        //exit 0
-end
-push -1
-pprint
+push 10
+push 0
+
+for
+    push i
+    push 0
+    for
+        strprint "*"
+    loop
+    strprint "\n"
+loop
 exit 0
 ```
 `Output:`
 ```
-413
--1
-```
+*
+**
+***
+****
+*****
+******
+*******
+********
+*********
+**********
+***********```
 
 `Generated assembly code:`
 ```
 BITS 64
+segment .data
+LPPE0 dq 0
+LPPI0 dq 0
+LPPE1 dq 0
+LPPI1 dq 0
+str0 db "*"
+strLen0 equ $- str0
+str1 db 10,""
+strLen1 equ $- str1
 segment .text
 global _start
 _start:
 ;; push
-    push 5
+    push 10
 ;; push
-    push 1
-;; sub
-    pop rax
-    pop rbx
-    sub rbx,rax
-    push rbx
+    push 0
+;; FOR ------
+pop rax
+pop rbx
+push rbx
+push rax
+mov [LPPE0], rbx
+mov [LPPI0], rax
+.JA13:
+cmp rax, rbx
+jg .JA2
+;;  push i
+mov rax, [LPPI0]
+push rax
 ;; push
-    push 4
-;;isequal
-    mov rbx, 1
-    mov rcx, 0
-    pop rax
-    pop rdx
-    push rdx
-    push rax
-    cmp rax,rdx
-        cmovz rax, rbx
-    push rax
-;;-----if---
-    pop rax
-    cmp rax, 1
-    jnz .JA0
-;; push
-    push 413
-;;pprint
-    pop rdi
-    push rdi
-    call pprint
-;;-----END---
-    .JA0:
-;; push
-    push -1
-;;pprint
-    pop rdi
-    push rdi
-    call pprint
+    push 0
+;; FOR ------
+pop rax
+pop rbx
+push rbx
+push rax
+mov [LPPE1], rbx
+mov [LPPI1], rax
+.JA8:
+cmp rax, rbx
+jg .JA5
+;;stringprint
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, str0
+    mov rdx, strLen0
+    syscall
+;; LOOP ------
+mov rax, [LPPI1]
+mov rbx, [LPPE1]
+inc rax
+mov [LPPI1], rax 
+jmp .JA8
+.JA5:
+;;stringprint
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, str1
+    mov rdx, strLen1
+    syscall
+;; LOOP ------
+mov rax, [LPPI0]
+mov rbx, [LPPE0]
+inc rax
+mov [LPPI0], rax 
+jmp .JA13
+.JA2:
 ;; exit --- 
     mov rdi, 0x00
     mov rax, 60
@@ -72,6 +105,8 @@ _start:
 pop rdi
 mov rax, 60
 syscall
+
+
 pprint:
 sub     rsp, 56
 mov     eax, edi
@@ -115,5 +150,4 @@ mov rax, 1 ;; SYS_WRITE
 syscall 
 add     rsp, 56
 ret
-
 ```
